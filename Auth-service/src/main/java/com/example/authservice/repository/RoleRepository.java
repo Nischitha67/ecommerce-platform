@@ -1,4 +1,4 @@
-package com.example.authservice.Repository;
+package com.example.authservice.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.authservice.Repository.RoleRepository;
-import com.example.authservice.Repository.UserRepository;
+import com.example.authservice.repository.RoleRepository;
+import com.example.authservice.repository.UserRepository;
 import com.example.authservice.dto.JwtResponse;
 import com.example.authservice.dto.LoginRequest;
 import com.example.authservice.dto.SignupRequest;
