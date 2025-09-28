@@ -1,10 +1,10 @@
-package com.example.ecommerce_platform;
+package com.example.authservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class EcommercePlatformApplicationTests {
+class AuthServiceApplicationTests {
 
 	@Test
 	void contextLoads() {

@@ -1,18 +1,19 @@
-package com.example.ecommerce_platform.security.jwt;
+package com.example.authservice.security.jwt;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
 import java.security.Key;
 import java.util.Date;
 
 @Component
 public class JwtUtil {
-    private final String SECRET_KEY = "your-secret-key-your-secret-key"; // 32+ chars
+    SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS256);// 32+ chars
     private final long EXPIRATION = 1000 * 60 * 60; // 1 hr
 
-    private final Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
+
 
     public String generateToken(String username) {
         return Jwts.builder()

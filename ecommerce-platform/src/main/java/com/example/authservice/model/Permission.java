@@ -1,4 +1,4 @@
-package com.example.ecommerce_platform.model;
+package com.example.authservice.model;
 
 import java.util.HashSet;
 import java.util.Set;

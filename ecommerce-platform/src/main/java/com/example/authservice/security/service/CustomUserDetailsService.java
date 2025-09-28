@@ -1,11 +1,11 @@
-package com.example.enterprise_content_platform.Secuirity.Service;
+package com.example.authservice.security.service;
 
-import com.example.model.User;
-import com.example.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
+import com.example.authservice.Repository.UserRepository;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
