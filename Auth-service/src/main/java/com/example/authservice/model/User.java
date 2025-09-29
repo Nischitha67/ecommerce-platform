@@ -22,7 +22,11 @@ public class User implements UserDetails {
 
     private String password;
 
-    private boolean enabled = true;
+    public String getEmail() {
+		return email;
+	}
+
+	private boolean enabled = true;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(

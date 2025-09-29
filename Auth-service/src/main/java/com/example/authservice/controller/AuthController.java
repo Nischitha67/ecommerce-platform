@@ -16,19 +16,29 @@ import com.example.authservice.repository.UserRepository;
 import com.example.authservice.dto.JwtResponse;
 import com.example.authservice.dto.LoginRequest;
 import com.example.authservice.dto.SignupRequest;
+import com.example.authservice.dto.TokenRequest;
+import com.example.authservice.dto.UserCreatedEvent;
 import com.example.authservice.model.Role;
 import com.example.authservice.model.User;
 import com.example.authservice.security.jwt.JwtUtil;
+import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 // controller/AuthController.java
 @RestController
 @RequestMapping("/auth")
+@Slf4j
 public class AuthController {
     @Autowired private AuthenticationManager authManager;
     @Autowired private UserRepository userRepository;
     @Autowired private RoleRepository roleRepository;
     @Autowired private PasswordEncoder passwordEncoder;
     @Autowired private JwtUtil jwtUtil;
+   
+
 
     @PostMapping("/signup")
     public ResponseEntity<?> register(@RequestBody SignupRequest request) {
@@ -44,25 +54,49 @@ public class AuthController {
             .orElseThrow(() -> new RuntimeException("Role not found"));
         user.getRoles().add(role);
 
-        userRepository.save(user);
         return ResponseEntity.ok("User registered successfully!");
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
-        // Authenticate user
-        Authentication authentication = authManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
-        );
+        log.debug("Login request received for username: {}", request.getUsername());
 
-        // Extract username
-        String username = authentication.getName(); // <-- returns String
+        try {
+            Authentication authentication = authManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
+            );
 
-        // Generate JWT token using username
-        String token = jwtUtil.generateToken(username);
+            String username = authentication.getName();
+            String token = jwtUtil.generateToken(username);
 
-        // Return token in response
-        return ResponseEntity.ok(new JwtResponse(token));
+            log.debug("JWT generated for username {}: {}", username, token);
+
+            return ResponseEntity.ok(new JwtResponse(token));
+        } catch (Exception e) {
+            log.error("Login failed for username {}: {}", request.getUsername(), e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+        }
     }
+
+    @PostMapping("/validate")
+    public ResponseEntity<?> validate(@RequestBody TokenRequest tokenRequest) {
+        log.debug("Received token validation request");
+
+        boolean valid = jwtUtil.validateToken(tokenRequest.getToken());
+        log.debug("Token validation result: {}", valid);
+
+        if (valid) {
+            String username = jwtUtil.extractUsername(tokenRequest.getToken());
+            log.debug("Token belongs to username: {}", username);
+            return ResponseEntity.ok(Map.of(
+                    "valid", true,
+                    "username", username
+            ));
+        } else {
+            log.debug("Token is invalid");
+            return ResponseEntity.ok(Map.of("valid", false));
+        }
+    }
+
 
 }
