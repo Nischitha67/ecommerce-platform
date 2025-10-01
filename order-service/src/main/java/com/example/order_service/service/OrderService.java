@@ -1,25 +1,28 @@
 package com.example.order_service.service;
 
-import com.example.cart_service.event.CartCheckedOutEvent;
+import com.example.order_service.event.CartCheckedOutEvent;
 import com.example.order_service.model.Order;
+import com.example.order_service.repository.OrderRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class OrderService {
 
-    private final List<Order> orders = new ArrayList<>();
+    @Autowired
+    private OrderRepository orderRepository;
 
     public void createOrder(CartCheckedOutEvent event) {
         Order order = new Order();
-        order.setUserId(event.userId());
-        order.setItems(event.items());
+        order.setUserId(event.getUserId());
+        order.setItems(event.getItems());
         order.setStatus("CREATED");
-        orders.add(order);
-        System.out.println("Order created for user: " + event.userId());
+        orderRepository.save(order);
     }
 
-    public List<Order> getOrders() { return orders; }
+    public List<Order> getOrders() {
+        return orderRepository.findAll();
+    }
 }

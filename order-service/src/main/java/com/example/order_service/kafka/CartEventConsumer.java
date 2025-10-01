@@ -1,6 +1,6 @@
 package com.example.order_service.kafka;
 
-import com.example.cart_service.event.CartCheckedOutEvent;
+import com.example.order_service.event.CartCheckedOutEvent;
 import com.example.order_service.service.OrderService;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
