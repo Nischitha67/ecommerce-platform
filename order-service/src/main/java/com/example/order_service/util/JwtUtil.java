@@ -10,7 +10,7 @@ import java.util.Date;
 
 @Component
 public class JwtUtil {
-    private final String SECRET = "NischithaDemoProjectSuperSecretKey123!";// 32+ chars
+    private final String SECRET = "bXlTdXBlclNlY3JldEtleVRoYXRJc0F0TGVhc3QzMkNoYXJzTG9uZyEh";// 32+ chars
     Key key = Keys.hmacShaKeyFor(SECRET.getBytes());
     private final long EXPIRATION = 1000 * 60 * 60; // 1 hr
 

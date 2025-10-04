@@ -3,17 +3,8 @@ package com.example.product_service.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.example.product_service.client.AuthClient;
 import com.example.product_service.model.Product;
 import com.example.product_service.service.ProductService;
 
@@ -25,44 +16,30 @@ import lombok.extern.slf4j.Slf4j;
 public class ProductController {
 
     private final ProductService service;
-    private final AuthClient authClient; // Feign or REST client to Auth Service
-    public ProductController(ProductService service, AuthClient authClient) {
+
+    public ProductController(ProductService service) {
         this.service = service;
-        this.authClient = authClient;
     }
 
+    // All POST/PUT/DELETE are now protected by API Gateway
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody Product product,
-                                    @RequestHeader("Authorization") String tokenHeader) {
-        if (!authClient.isAdmin(tokenHeader)) {
-            return ResponseEntity.status(403).body("Forbidden");
-        }
+    public ResponseEntity<Product> create(@RequestBody Product product) {
         return ResponseEntity.ok(service.createProduct(product));
     }
 
     @GetMapping
     public List<Product> getAll() {
-
-        log.debug("get all");
+        log.debug("Fetching all products");
         return service.getAllProducts();
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id,
-                                    @RequestBody Product product,
-                                    @RequestHeader("Authorization") String tokenHeader) {
-        if (!authClient.isAdmin(tokenHeader)) {
-            return ResponseEntity.status(403).body("Forbidden");
-        }
+    public ResponseEntity<Product> update(@PathVariable Long id, @RequestBody Product product) {
         return ResponseEntity.ok(service.updateProduct(id, product));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id,
-                                    @RequestHeader("Authorization") String tokenHeader) {
-        if (!authClient.isAdmin(tokenHeader)) {
-            return ResponseEntity.status(403).body("Forbidden");
-        }
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
         service.deleteProduct(id);
         return ResponseEntity.ok().build();
     }

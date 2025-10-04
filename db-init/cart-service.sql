@@ -1,0 +1,3 @@
+CREATE DATABASE cartdb;
+GRANT ALL PRIVILEGES ON DATABASE cartdb TO micro_user;
+

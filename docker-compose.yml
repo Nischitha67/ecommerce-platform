@@ -20,13 +20,18 @@ services:
     image: postgres:14
     container_name: postgres
     environment:
-      POSTGRES_USER: springuser
-      POSTGRES_PASSWORD: SpringPass123
-      POSTGRES_DB: ecommerce
+      POSTGRES_USER: micro_user
+      POSTGRES_PASSWORD: MicroPass123
     ports:
       - "5432:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
+      - ./db-init:/docker-entrypoint-initdb.d
+  eureka-server:
+    build: ./eureka-server
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
 
   cart-service:
     build: ./cart-service
@@ -37,9 +42,9 @@ services:
     ports:
       - "8081:8081"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ecommerce
-      SPRING_DATASOURCE_USERNAME: springuser
-      SPRING_DATASOURCE_PASSWORD: SpringPass123
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/cartdb
+      SPRING_DATASOURCE_USERNAME: micro_user
+      SPRING_DATASOURCE_PASSWORD: MicroPass123
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
 
   order-service:
@@ -52,9 +57,9 @@ services:
     ports:
       - "8082:8082"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ecommerce
-      SPRING_DATASOURCE_USERNAME: springuser
-      SPRING_DATASOURCE_PASSWORD: SpringPass123
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/orderdb
+      SPRING_DATASOURCE_USERNAME: micro_user
+      SPRING_DATASOURCE_PASSWORD: MicroPass123
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
 
   product-service:
@@ -66,9 +71,9 @@ services:
     ports:
       - "8083:8083"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ecommerce
-      SPRING_DATASOURCE_USERNAME: springuser
-      SPRING_DATASOURCE_PASSWORD: SpringPass123
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/productdb
+      SPRING_DATASOURCE_USERNAME: micro_user
+      SPRING_DATASOURCE_PASSWORD: MicroPass123
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
 
   auth-service:
@@ -80,10 +85,21 @@ services:
     ports:
       - "8080:8080"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ecommerce
-      SPRING_DATASOURCE_USERNAME: springuser
-      SPRING_DATASOURCE_PASSWORD: SpringPass123
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/authdb
+      SPRING_DATASOURCE_USERNAME: micro_user
+      SPRING_DATASOURCE_PASSWORD: MicroPass123
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+
+
+  api-gateway:
+      build: ./api-gateway
+      container_name: api-gateway
+      ports:
+        - "8085:8085"
+      depends_on:
+        - auth-service
+        - product-service
+        - order-service
 
 volumes:
   postgres-data:

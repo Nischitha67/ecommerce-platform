@@ -11,8 +11,11 @@
 
     <modules>
         <module>auth-service</module>
-        <module>user-service</module>
         <module>product-service</module>
+        <module>cart-service</module>
+        <module>order-service</module>
+        <module>eureka-server</module>
+        <module>api-gateway</module>
     </modules>
 
     <properties>
@@ -43,6 +46,8 @@
                 <scope>import</scope>
             </dependency>
         </dependencies>
+
+
     </dependencyManagement>
 
     <build>

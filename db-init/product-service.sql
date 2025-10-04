@@ -1,0 +1,2 @@
+CREATE DATABASE productdb;
+GRANT ALL PRIVILEGES ON DATABASE productdb TO micro_user;

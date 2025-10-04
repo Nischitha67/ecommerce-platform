@@ -1,0 +1,2 @@
+CREATE DATABASE orderdb;
+GRANT ALL PRIVILEGES ON DATABASE orderdb TO micro_user;
