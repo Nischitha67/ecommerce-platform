@@ -1,31 +1,83 @@
 package com.example.api_gateway.filter;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.gateway.filter.GatewayFilter;
-import org.springframework.cloud.gateway.filter.GatewayFilterChain;
-import org.springframework.stereotype.Component;
-import org.springframework.web.server.ServerWebExchange;
-import reactor.core.publisher.Mono;
-
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
+import org.springframework.web.server.ServerWebExchange;
+import org.springframework.cloud.gateway.filter.GatewayFilter;
+import org.springframework.cloud.gateway.filter.GatewayFilterChain;
+import reactor.core.publisher.Mono;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Component
 public class RoleBasedGatewayFilter implements GatewayFilter {
-    // JWT secret
+
     @Value("${jwt.secret}")
     private String secretKey;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        // Your existing role-based logic here
+        System.out.println("➡ Incoming request: " + exchange.getRequest().getMethod() + " " + exchange.getRequest().getURI());
+
+        String path = exchange.getRequest().getURI().getPath();
+        HttpMethod method = exchange.getRequest().getMethod();
+
+        // Skip auth-service endpoints
+        if (path.startsWith("/auth")) {
+            return chain.filter(exchange);
+        }
+
+        // Check Authorization header
+        String authHeader = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+            return exchange.getResponse().setComplete();
+        }
+
+        String token = authHeader.substring(7);
+
+        try {
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)))
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+
+            List<String> roles = (List<String>) claims.get("roles");
+
+            System.out.println("🔑 Incoming Token: " + token);
+            System.out.println("🔍 Secret Key Length: " + secretKey.length());
+            System.out.println("🔍 Claims: " + claims);
+            System.out.println("🔍 Roles from Token: " + roles);
+
+            if (path.startsWith("/products")) {
+                if (method == HttpMethod.GET) {
+                    if (roles == null || !(roles.contains("ROLE_USER") || roles.contains("ROLE_ADMIN"))) {
+                        exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
+                        return exchange.getResponse().setComplete();
+                    }
+                } else {
+                    if (roles == null || !roles.contains("ROLE_ADMIN")) {
+                        exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
+                        return exchange.getResponse().setComplete();
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+            return exchange.getResponse().setComplete();
+        }
+
+
         return chain.filter(exchange);
     }
 }
