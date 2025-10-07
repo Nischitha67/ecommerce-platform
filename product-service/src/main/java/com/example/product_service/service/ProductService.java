@@ -36,7 +36,13 @@ public class ProductService {
 
     }
 
-    public void deleteProduct(Long id) {
-        repository.deleteById(id);
+    public boolean deleteProduct(Long id) {
+        if (repository.existsById(id)) {
+            repository.deleteById(id);
+            return true; // successfully deleted
+        } else {
+            return false; // product not found
+        }
     }
+
 }

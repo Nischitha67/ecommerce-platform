@@ -34,13 +34,28 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Product> update(@PathVariable Long id, @RequestBody Product product) {
-        return ResponseEntity.ok(service.updateProduct(id, product));
+    public ResponseEntity<Product> updateProduct(
+            @PathVariable("id") Long id,
+            @RequestBody Product product) {
+
+        Product updatedProduct = service.updateProduct(id, product);
+        if (updatedProduct != null) {
+            return ResponseEntity.ok(updatedProduct);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
+    // ---------------- Delete Product ----------------
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        service.deleteProduct(id);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<Void> deleteProduct(@PathVariable("id") Long id) {
+
+        boolean deleted = service.deleteProduct(id); // return true if deleted, false if not found
+        if (deleted) {
+            return ResponseEntity.noContent().build(); // 204 No Content
+        } else {
+            return ResponseEntity.notFound().build();  // 404 Not Found
+        }
     }
+
 }

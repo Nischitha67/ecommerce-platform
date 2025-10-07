@@ -16,6 +16,9 @@ import reactor.core.publisher.Mono;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+import io.jsonwebtoken.io.Decoders;
+
+
 @Component
 public class RoleBasedGatewayFilter implements GatewayFilter {
 
@@ -44,8 +47,9 @@ public class RoleBasedGatewayFilter implements GatewayFilter {
         String token = authHeader.substring(7);
 
         try {
+
             Claims claims = Jwts.parserBuilder()
-                    .setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)))
+                    .setSigningKey(Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey)))
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
@@ -68,6 +72,13 @@ public class RoleBasedGatewayFilter implements GatewayFilter {
                         exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
                         return exchange.getResponse().setComplete();
                     }
+                }
+            }
+
+            if (path.startsWith("/orders")) {
+                if (roles == null || roles.isEmpty()) {
+                    exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+                    return exchange.getResponse().setComplete();
                 }
             }
 
