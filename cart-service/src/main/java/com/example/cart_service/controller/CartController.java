@@ -1,8 +1,8 @@
-package com.example.cartservice.controller;
+package com.example.cart_service.controller;
 
-import com.example.cartservice.event.CartCheckedOutEvent;
-import com.example.cartservice.model.CartItem;
-import com.example.cartservice.kafka.CartEventProducer;
+import com.example.cart_service.event.CartCheckedOutEvent;
+import com.example.cart_service.model.CartItem;
+import com.example.cart_service.kafka.CartEventProducer;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

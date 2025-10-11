@@ -16,6 +16,7 @@ import lombok.Builder;
 public class Order {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String orderId; // Primary key
 
     private String userId;

@@ -1,4 +1,4 @@
-package com.example.cartservice.model;
+package com.example.cart_service.model;
 
 public class CartItem {
     private Long productId;

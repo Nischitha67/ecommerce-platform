@@ -55,7 +55,7 @@ public class SecurityConfig {
                             "/swagger-ui.html",
                             "/v3/api-docs/**",
                             "/auth/**",
-                            "/actuator/**"
+                            "/actuator/**","/order/**"
                     ).permitAll()
                 // block everything else by default
                     .requestMatchers(HttpMethod.POST, "/products").hasRole("ADMIN")

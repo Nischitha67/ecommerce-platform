@@ -1,6 +1,6 @@
-package com.example.cartservice.kafka;
+package com.example.cart_service.kafka;
 
-import com.example.cartservice.event.CartCheckedOutEvent;
+import com.example.cart_service.event.CartCheckedOutEvent;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 

@@ -1,6 +1,6 @@
 package com.example.cart_service.service;
 
-import com.example.cartservice.model.CartItem;
+import com.example.cart_service.model.CartItem;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
