@@ -24,6 +24,14 @@ public class RouteConfig {
             .route("product-service", r -> r.path("/products/**")
                 .filters(f -> f.filter(roleBasedGatewayFilter))
                 .uri("http://product-service:8083"))
-            .build();
+
+            .route("order-service", r -> r.path("/order/**")
+                        .filters(f -> f.filter(roleBasedGatewayFilter))
+                        .uri("http://order-service:8082"))
+                .route("cart-service", r -> r.path("/cart/**")
+                        .filters(f -> f.filter(roleBasedGatewayFilter))
+                        .uri("http://order-service:8081"))
+
+                .build();
     }
 }

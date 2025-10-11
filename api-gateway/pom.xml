@@ -57,16 +57,9 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-actuator</artifactId>
     </dependency>
-    <dependency>
-        <groupId>org.springdoc</groupId>
-        <artifactId>springdoc-openapi-webflux-ui</artifactId>
-        <version>1.9.25</version>
-    </dependency>
-    <dependency>
-        <groupId>org.springdoc</groupId>
-        <artifactId>springdoc-openapi-gateway-webflux</artifactId>
-        <version>1.9.25</version>
-    </dependency>
+
+
+
 
 
 

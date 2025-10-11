@@ -73,9 +73,16 @@ public class RoleBasedGatewayFilter implements GatewayFilter {
                         return exchange.getResponse().setComplete();
                     }
                 }
+                System.out.println("🔍 Roles from Token: " + roles);
             }
 
-            if (path.startsWith("/orders")) {
+            if (path.startsWith("/order")) {
+                if (roles == null || roles.isEmpty()) {
+                    exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+                    return exchange.getResponse().setComplete();
+                }
+            }
+            if (path.startsWith("/cart")) {
                 if (roles == null || roles.isEmpty()) {
                     exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
                     return exchange.getResponse().setComplete();
