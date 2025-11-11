@@ -19,19 +19,17 @@ public class RouteConfig {
     @Bean
     public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
         return builder.routes()
-            .route("auth-service", r -> r.path("/auth/**")
-                .uri("http://auth-service:8080"))
-            .route("product-service", r -> r.path("/products/**")
-                .filters(f -> f.filter(roleBasedGatewayFilter))
-                .uri("http://product-service:8083"))
-
-            .route("order-service", r -> r.path("/order/**")
+                .route("auth-service", r -> r.path("/auth/**")
+                        .uri("lb://AUTH-SERVICE"))  // Uses Eureka
+                .route("product-service", r -> r.path("/products/**")
                         .filters(f -> f.filter(roleBasedGatewayFilter))
-                        .uri("http://order-service:8082"))
+                        .uri("lb://PRODUCT-SERVICE"))
+                .route("order-service", r -> r.path("/order/**")
+                        .filters(f -> f.filter(roleBasedGatewayFilter))
+                        .uri("lb://ORDER-SERVICE"))
                 .route("cart-service", r -> r.path("/cart/**")
                         .filters(f -> f.filter(roleBasedGatewayFilter))
-                        .uri("http://order-service:8081"))
-
+                        .uri("lb://CART-SERVICE"))
                 .build();
     }
 }
